@@ -15,7 +15,7 @@ app.get('/health', (_req, res) => {
 app.use('/api/me', meRouter);
 app.use('/api/admin/users', adminUsersRouter);
 
-const PORT = process.env.PORT || 8080;
+const PORT = Number(process.env.PORT) || 3000;
 
 app.listen(PORT, () => {
   console.log(`Lynbrook Sports Medicine API listening on port ${PORT}`);
