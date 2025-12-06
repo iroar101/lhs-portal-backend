@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import adminUsersRouter from './routes/adminUsers';
 import meRouter from './routes/me';
+import packageJson from '../package.json';
 
 const app = express();
 
@@ -10,6 +11,14 @@ app.use(express.json());
 
 app.get('/health', (_req, res) => {
   return res.json({ ok: true });
+});
+
+app.get('/', (_req, res) => {
+  return res.json({
+    message: 'Lynbrook Athletic Training API',
+    status: 'Running',
+    version: packageJson.version,
+  });
 });
 
 app.use('/api/me', meRouter);
