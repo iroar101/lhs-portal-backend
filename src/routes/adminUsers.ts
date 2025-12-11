@@ -32,6 +32,7 @@ router.get('/', async (_req: AuthedRequest, res: Response) => {
 router.patch('/:uid', async (req: AuthedRequest, res: Response) => {
   const { uid } = req.params;
   const { role, status } = req.body as Partial<AppUser>;
+  const actor = req.appUser;
 
   if (
     (role !== undefined && !isValidRole(role)) ||
@@ -58,6 +59,20 @@ router.patch('/:uid', async (req: AuthedRequest, res: Response) => {
 
     if (!snapshot.exists) {
       return res.status(404).json({ error: 'User not found' });
+    }
+
+    const target = snapshot.data() as AppUser;
+    if (actor?.role === 'provider') {
+      if (target.role === 'super_user') {
+        return res
+          .status(403)
+          .json({ error: 'Providers cannot modify super users' });
+      }
+      if (role === 'super_user') {
+        return res
+          .status(403)
+          .json({ error: 'Providers cannot assign the super_user role' });
+      }
     }
 
     await userRef.update(updates);
